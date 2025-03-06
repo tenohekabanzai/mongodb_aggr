@@ -46,7 +46,7 @@ db.nonfiction.deleteMany({})
 db.nonfiction.find({},{name:1})
 db.nonfiction.find({},{price:1})
 
-// schema validation
+// SCHEMA VALIDATION
 db.createCollection("nonfiction",{
     validator:{
         $jsonSchema:{
@@ -102,10 +102,42 @@ db.book.find({isbn:{$exists:true}})
 // $type is used to check the type of a specific field
 db.book.find({isbn:{$exists:true,$type:"string"}})
 
-
-// Evaluation Operators
+// EVALUATION OPERATORS 
 // $expr -> helps use aggregation expressions within the query language
 db.books.find({$expr : {$gt: ["$price", "$discountedPrice"]}}) // show fields where price is greater than dicountedPrice
 
-// $jsonSchema -> Validate documents against he given JSON Schema
+db.students.find({"$expr":{}})
 
+// $mod -> carry out modulo operators
+db.students.find({age:{$mod:[2,0]}}) // even ages
+db.students.find({age:{$mod:[2,1]}}) // odd ages
+
+// QUERYING ARRAYS
+// check if Hobbies field include Cricket
+db.students.find({Hobbies:"Cricket"})
+// check if size of experience field = 3
+db.students.find({experience:{$size:3}})
+// check if company in experience field equals amazon
+db.students.find({"experience.company":"Amazon"})
+// check if experience field exists and it`s size >=3
+db.students.find({ 
+    experience:{$exists:true,$type:"array"}, 
+    $expr:{$gte:[{$size:"$experience"},3]}
+});
+// checking if Hobbies field contain any one of the mentioned
+db.students.find({Hobbies:{$in:["Walking","Reading","Walk"]}})
+// checking if Hobbies field contain all of the mentioned
+db.students.find({Hobbies:{$all:["Walking","Reading"]}})
+// applying multiple checks on a single tuple, check if product has entry with name="apple" and quantity>11
+db.products.find({products:{$elemMatch:{quantity:{$gt:11},name:"apple"}}})
+
+
+
+// SORTING
+// sorting on basis of age
+db.teachers.find().sort({age:1}).forEach(x=>printjson(x))
+// sorting on basis of age and name
+db.teachers.find().sort({age:1,name:1}).forEach(x=>printjson(x))
+
+
+// 
