@@ -177,3 +177,15 @@ db.students.updateMany({experience:{$elemMatch:{duration:{$lte:1}}}},{$set:{"exp
 db.students.updateMany({experience:{$elemMatch:{duration:{$lte: 1}}}},{$set:{"experience.$[e].neglect":true}},{arrayFilters:[{"e.duration":{$lte:1}}]})
 // filter -> find all tuples where exists an entry of experience field with duration<=1
 // set -> set all the matching idxs of experience field (ie those with duration<=1) to have neglect = true
+
+// push entry into experience
+db.students.updateOne({name:"XYZ"},{$push:{experience:{company:"Meta",duration:2}}})
+// push entry into experience without duplication
+db.students.updateOne({name:"XYZ"},{$addToSet:{experience:{company:"Meta",duration:2}}})
+// delete entry in experience array with matching fields
+db.students.updateOne({name:"XYZ"},{$pull:{experience:{company:"Meta",duration:2}}})
+db.students.updateOne({name:"XYZ"},{$pop:{experience:1}}) // delete last entry in experience
+db.students.updateOne({name:"XYZ"},{$pop:{experience:-1}}) // delete first entry in experience
+
+
+
