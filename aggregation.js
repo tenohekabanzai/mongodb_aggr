@@ -31,23 +31,6 @@ db.students.aggregate([{$unwind:"$Hobbies"},{$group:{_id:"$Hobbies"}}])
 db.students.aggregate([{$group:{_id:null,count:{$sum:{$size:{$ifNull:["$Hobbies",[]]}}}}}])
 
 
-db.emp.aggregate([
-{
-    $group:{
-        _id: null,
-        avgScore:{
-            $avg:{
-                $filter:{
-                    input: "$scores",
-                    as:"score",
-                    cond:{$gt:["$age",20]}
-                }
-            }
-        }
-    }
-}
-])
-
 
 // show the average score of every entry with age>25 / scores is an array here
 db.emp.aggregate([{$match:{age:{$gt:25}}},{$project:{age:1,name:1,avgScore:{$avg:"$scores"}}}])
