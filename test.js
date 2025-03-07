@@ -140,4 +140,40 @@ db.teachers.find().sort({age:1}).forEach(x=>printjson(x))
 db.teachers.find().sort({age:1,name:1}).forEach(x=>printjson(x))
 
 
-// 
+// ADVANCED UPDATES
+// increase age of all students by 2
+db.students.updateMany({},{$inc:{age:2}})
+// decrease age of all students by 1
+db.students.updateMany({},{$inc:{age:-1}})
+// update age of Sita to 35 if it age>35
+db.students.updateOne({name:"XYZ"},{$min:{age:35}})
+// update age of Sita to 40 if it age<40
+db.students.updateOne({name:"XYZ"},{$max:{age:40}})
+// mutiply age by 2
+db.students.updateOne({name:"XYZ"},{$mul:{age:2}})
+// remove the age field
+db.students.updateOne({name:"XYZ"},{$unset:{age:0}})
+// remove the age and name field
+db.students.updateOne({name:"XYZ"},{$unset:{age:0,name:""}})
+// add age field 
+db.students.updateOne({name:"XYZ"},{$set:{age:20}})
+// rename field
+db.students.updateOne({name:"XYZ"},{$rename:{age:"studentAge"}})
+// $upsert -> update tuple if it exists else insert new tuple
+db.students.updateOne({name:"Golu"},{$set:{age:100}},{upsert:true})
+
+// $push, $pull, $pop, $addToSet operators
+
+// find all the tuples which have some idx of experience field with duration <=1
+db.students.find({experience:{$elemMatch:{duration:{$lte:1}}}})
+db.students.updateMany({experience:{$elemMatch:{duration:{$lte:1}}}},{$set:{"experience.$.neglect":true}})
+// filter -> find all tuples where exists an entry of experience field with duration<=1
+// set -> set the first idx of experience field to have neglect = true
+
+db.students.updateMany({experience:{$elemMatch:{duration:{$lte:1}}}},{$set:{"experience.$[].neglect":false}})
+// filter -> find all tuples where exists an entry of experience field with duration<=1
+// set -> set all idxs experience field to have neglect = true
+
+db.students.updateMany({experience:{$elemMatch:{duration:{$lte: 1}}}},{$set:{"experience.$[e].neglect":true}},{arrayFilters:[{"e.duration":{$lte:1}}]})
+// filter -> find all tuples where exists an entry of experience field with duration<=1
+// set -> set all the matching idxs of experience field (ie those with duration<=1) to have neglect = true
